@@ -135,7 +135,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Scene_Cook.cpp" />
+    <ClCompile Include="Scene_Game.cpp" />
+    <ClCompile Include="Scene_Title.cpp" />
     <ClCompile Include="WinMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Scene_Cook.h" />
+    <ClInclude Include="Scene_Game.h" />
+    <ClInclude Include="Scene_Title.h" />
+    <ClInclude Include="WinMain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
