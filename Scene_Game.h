@@ -33,3 +33,5 @@ struct Stage
 
 void InitializeStage(Stage& stage, int stageIndex = 0);
 void DrawStage(const Stage& stage);
+void DrawStageClearScreen(int stageNumber);
+void DrawAllClearScreen();

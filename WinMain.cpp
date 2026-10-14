@@ -151,8 +151,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
         // 4. åªç›ÇÃèÛë‘Çï`âÊÇµÇ‹Ç∑ÅB
         ClearDrawScreen();
-        DrawStage(stage);
-        DrawPlayer(player);
+        if (gameState == GameState::Title)
+        {
+            DrawTitleScreen();
+        }
+        else if (gameState == GameState::Playing)
+        {
+            DrawStage(stage);
+            DrawPlayer(player);
+
+            DrawString(24, 24,
+                "Left/Right: Move / Space: Reverse / R: Retry / Esc: Exit",
+                textColor);
+
+            DrawString(24, 44,
+                player.gravityDirection == 1 ? "Gravity: DOWN" : "Gravity: UP",
+                textColor);
+
+            DrawString(620, 44, "Red zones: spikes", textColor);
+
+            DrawFormatString(1000, 44, textColor,
+                "Stage: %d / %d", stageIndex + 1, STAGE_COUNT);
+        }
+        else if (gameState == GameState::StageClear)
+        {
+            DrawStageClearScreen(stageIndex + 1);
+        }
+        else if (gameState == GameState::AllClear)
+        {
+            DrawAllClearScreen();
+        }
 
         DrawString(24, 24,
             "Step 8 - Left/Right: Move / Space: Reverse / R: Retry / Esc: Exit",
