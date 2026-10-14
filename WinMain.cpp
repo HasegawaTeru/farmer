@@ -1,82 +1,67 @@
 #include "WinMain.h"
+#include "GameConfig.h"
+#include "Player.h"
 
-// ------------------------------
-// WinMain
-// ------------------------------
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
+int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
-	// =======================================
-	//  初期化処理
-	// =======================================
-	// ログの書き出しを無効化
-	SetOutApplicationLogValidFlag(FALSE);	// ログの書き出しを無効化
+    ChangeWindowMode(TRUE);
+    SetGraphMode(WINDOW_W, WINDOW_H, 32);
+    SetMainWindowText("Reverse Gravity");
+    SetBackgroundColor(24, 28, 40);
+    SetWaitVSyncFlag(TRUE);
 
-	// ウィンドウモードの設定
-	ChangeWindowMode(TRUE);					// ウインドウモードを有効化
+    if (DxLib_Init() == -1)
+    {
+        return -1;
+    }
 
-	// ウィンドウサイズとカラービットの設定
-	SetGraphMode(WINDOW_W, WINDOW_H, 32);
+    SetDrawScreen(DX_SCREEN_BACK);
 
-	// ウィンドウのタイトル
-	SetMainWindowText("Sample");
+    Player player{};
+    InitializePlayer(player, 96.0f, 600.0f);
+    const unsigned int textColor = GetColor(240, 240, 240);
+    LONGLONG previousTime = GetNowHiPerformanceCount();
 
-	// 背景色の設定
-	SetBackgroundColor(128, 128, 128);
+    while (ProcessMessage() == 0)
+    {
+        // 1. 経過時間を求めます。
+        const LONGLONG currentTime = GetNowHiPerformanceCount();
+        float deltaTime = static_cast<float>(currentTime - previousTime)
+            / 1000000.0f;
+        previousTime = currentTime;
 
-	// ＤＸライブラリ初期化処理
-	if (DxLib_Init() == -1)
-	{
-		return -1;							// エラーが起きたら直ちに終了
-	}
+        if (deltaTime > MAX_DELTA_TIME)
+        {
+            deltaTime = MAX_DELTA_TIME;
+        }
 
-	// ウィンドウ描画モード設定
-	SetDrawScreen(DX_SCREEN_BACK);			// 裏画面に描画する
+        // 2. 入力を取得します。
+        if (CheckHitKey(KEY_INPUT_ESCAPE) != 0)
+        {
+            break;
+        }
 
-	// ------------------------------
-	//  ゲームループ
-	// ------------------------------
-	while (ProcessMessage() == 0)
-	{
+        int moveDirection = 0;
+        if (CheckHitKey(KEY_INPUT_LEFT) != 0)
+        {
+            --moveDirection;
+        }
+        if (CheckHitKey(KEY_INPUT_RIGHT) != 0)
+        {
+            ++moveDirection;
+        }
 
-		// リフレッシュレートを設定するための処理
-		clock_t check_fps = clock() + CLOCKS_PER_SEC / 60;
+        // 3. プレイヤーの状態を更新します。
+        UpdatePlayer(player, moveDirection, deltaTime);
 
-		// マウスカーソル表示設定
-		SetMouseDispFlag(FALSE);
+        // 4. 現在の状態を描画します。
+        ClearDrawScreen();
+        DrawPlayer(player);
+        DrawString(24, 24, "Step 3 - Left/Right: Move / Esc: Exit", textColor);
+        ScreenFlip();
+        WaitTimer(1);
+    }
 
-		// 画面上の描画を初期化（画面を消去）
-		ClearDrawScreen();
-
-		// =======================================
-		//  入力処理
-		// =======================================
-
-		// =======================================
-		//  更新処理
-		// =======================================
-
-		// =======================================
-		//  描画処理
-		// =======================================
-
-		// =======================================
-		//  音声再生処理
-		// =======================================
-
-		// リフレッシュレートが一定になるまで待つ処理
-		while (clock() < check_fps) {}
-
-		// 裏画面の描画を表に反映
-		ScreenFlip();
-
-	}
-
-	// =======================================
-	//  終了処理
-	// =======================================
-	// ＤＸライブラリ使用の終了処理
-	DxLib_End();							// ＤＸライブラリ使用の終了処理
-
-	// ソフトの終了
-	return 0;
+    DxLib_End();
+    return 0;
 }
