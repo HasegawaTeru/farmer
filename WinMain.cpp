@@ -18,8 +18,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
     SetDrawScreen(DX_SCREEN_BACK);
 
+    int stageIndex = 0; // 内部の番号は 0、1、2 です。
+    GameState gameState = GameState::Playing;
+
     Stage stage{};
-    InitializeStage(stage);
+    InitializeStage(stage, stageIndex);
 
     Player player{};
     InitializePlayer(player, stage.startX, stage.startY);
@@ -29,6 +32,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     float accumulatedTime = 0.0f;
     bool previousSpaceDown = false;
     bool previousRetryDown = false;
+    bool previousEnterDown = false;
 
     while (ProcessMessage() == 0)
     {
@@ -61,14 +65,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
         const bool spaceDown = CheckHitKey(KEY_INPUT_SPACE) != 0;
         const bool retryDown = CheckHitKey(KEY_INPUT_R) != 0;
+        const bool enterDown = CheckHitKey(KEY_INPUT_RETURN) != 0;
+
         const bool reversePressed = spaceDown && !previousSpaceDown;
         const bool retryPressed = retryDown && !previousRetryDown;
+        const bool enterPressed = enterDown && !previousEnterDown;
 
         previousSpaceDown = spaceDown;
         previousRetryDown = retryDown;
+        previousEnterDown = enterDown;
 
-        // 3. R を押した瞬間はリトライを優先します。
-        if (retryPressed)
+        // 3. クリア後は物理更新を止め、Enter を待ちます。
+        if (gameState != GameState::Playing)
+        {
+            accumulatedTime = 0.0f;
+
+            if (enterPressed)
+            {
+                if (gameState == GameState::AllClear)
+                {
+                    stageIndex = 0;
+                }
+                else
+                {
+                    ++stageIndex;
+                }
+
+                InitializeStage(stage, stageIndex);
+                InitializePlayer(player, stage.startX, stage.startY);
+                gameState = GameState::Playing;
+            }
+        }
+        else if (retryPressed)
         {
             InitializePlayer(player, stage.startX, stage.startY);
             accumulatedTime = 0.0f;
@@ -87,10 +115,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 UpdatePlayer(player, moveDirection, PHYSICS_STEP, stage);
                 accumulatedTime -= PHYSICS_STEP;
 
-                // ミスをすぐ検出できるよう、物理更新のたびに調べます。
+                // ミスを先に調べます。
                 if (IsPlayerDead(player, stage))
                 {
                     InitializePlayer(player, stage.startX, stage.startY);
+                    accumulatedTime = 0.0f;
+                    break;
+                }
+
+                // ミスと出口に同時に触れた場合は、ミスを優先します。
+                if (IsPlayerAtGoal(player, stage))
+                {
+                    gameState = (stageIndex + 1 < STAGE_COUNT)
+                        ? GameState::StageClear : GameState::AllClear;
+
                     accumulatedTime = 0.0f;
                     break;
                 }
@@ -103,7 +141,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         DrawPlayer(player);
 
         DrawString(24, 24,
-            "Step 6 - Left/Right: Move / Space: Reverse / R: Retry / Esc: Exit",
+            "Step 7 - Left/Right: Move / Space: Reverse / R: Retry / Esc: Exit",
             textColor);
 
         DrawString(24, 44,
@@ -111,6 +149,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             textColor);
 
         DrawString(620, 44, "Red zones: spikes", textColor);
+
+        DrawFormatString(1000, 44, textColor,
+            "Stage: %d / %d", stageIndex + 1, STAGE_COUNT);
+
+        if (gameState == GameState::StageClear)
+        {
+            DrawString(420, 300,
+                "STAGE CLEAR! Enter: Next stage", textColor);
+        }
+        else if (gameState == GameState::AllClear)
+        {
+            // タイトル画面を追加するまでは、最初から再開します。
+            DrawString(400, 300,
+                "ALL STAGES CLEAR! Enter: Restart", textColor);
+        }
 
         ScreenFlip();
         WaitTimer(1);

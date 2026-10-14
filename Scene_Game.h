@@ -26,7 +26,8 @@ struct Stage
     float startY;
     Spike spikes[MAX_SPIKES];
     int spikeCount;
+    Rect goal;
 };
 
-void InitializeStage(Stage& stage);
+void InitializeStage(Stage& stage, int stageIndex = 0);
 void DrawStage(const Stage& stage);

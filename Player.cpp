@@ -119,6 +119,16 @@ bool IsPlayerDead(const Player& player, const Stage& stage)
     return false;
 }
 
+bool IsPlayerAtGoal(const Player& player, const Stage& stage)
+{
+    const Rect& goal = stage.goal;
+
+    return player.x <= goal.x + goal.width &&
+        player.x + PLAYER_SIZE >= goal.x &&
+        player.y <= goal.y + goal.height &&
+        player.y + PLAYER_SIZE >= goal.y;
+}
+
 void DrawPlayer(const Player& player)
 {
     const int drawX = static_cast<int>(player.x);
