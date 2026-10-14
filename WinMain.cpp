@@ -1,8 +1,9 @@
 #include "WinMain.h"
 #include "GameConfig.h"
 #include "Player.h"
+#include "Scene_Game.h"
 
-int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
     ChangeWindowMode(TRUE);
     SetGraphMode(WINDOW_W, WINDOW_H, 32);
@@ -17,10 +18,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 
     SetDrawScreen(DX_SCREEN_BACK);
 
+    Stage stage{};
+    InitializeStage(stage);
+
     Player player{};
-    InitializePlayer(player, 96.0f, 600.0f);
+    InitializePlayer(player, stage.startX, stage.startY);
+
     const unsigned int textColor = GetColor(240, 240, 240);
     LONGLONG previousTime = GetNowHiPerformanceCount();
+    float accumulatedTime = 0.0f;
 
     while (ProcessMessage() == 0)
     {
@@ -51,13 +57,22 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
             ++moveDirection;
         }
 
-        // 3. プレイヤーの状態を更新します。
-        UpdatePlayer(player, moveDirection, deltaTime);
+        // 3. 経過時間をため、物理を常に同じ時間幅で更新します。
+        accumulatedTime += deltaTime;
+
+        while (accumulatedTime >= PHYSICS_STEP)
+        {
+            UpdatePlayer(player, moveDirection, PHYSICS_STEP, stage);
+            accumulatedTime -= PHYSICS_STEP;
+        }
 
         // 4. 現在の状態を描画します。
         ClearDrawScreen();
+        DrawStage(stage);
         DrawPlayer(player);
-        DrawString(24, 24, "Step 3 - Left/Right: Move / Esc: Exit", textColor);
+        DrawString(24, 24,
+            "Step 4 - Gravity & Collision / Left/Right: Move / Esc: Exit",
+            textColor);
         ScreenFlip();
         WaitTimer(1);
     }
