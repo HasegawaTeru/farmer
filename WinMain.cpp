@@ -28,6 +28,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     LONGLONG previousTime = GetNowHiPerformanceCount();
     float accumulatedTime = 0.0f;
     bool previousSpaceDown = false;
+    bool previousRetryDown = false;
 
     while (ProcessMessage() == 0)
     {
@@ -58,23 +59,42 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             ++moveDirection;
         }
 
-        // 押した瞬間だけ反転します。物理更新の while の外で判定します。
         const bool spaceDown = CheckHitKey(KEY_INPUT_SPACE) != 0;
-
-        if (spaceDown && !previousSpaceDown)
-        {
-            ReversePlayerGravity(player);
-        }
+        const bool retryDown = CheckHitKey(KEY_INPUT_R) != 0;
+        const bool reversePressed = spaceDown && !previousSpaceDown;
+        const bool retryPressed = retryDown && !previousRetryDown;
 
         previousSpaceDown = spaceDown;
+        previousRetryDown = retryDown;
 
-        // 3. 経過時間をため、物理を常に同じ時間幅で更新します。
-        accumulatedTime += deltaTime;
-
-        while (accumulatedTime >= PHYSICS_STEP)
+        // 3. R を押した瞬間はリトライを優先します。
+        if (retryPressed)
         {
-            UpdatePlayer(player, moveDirection, PHYSICS_STEP, stage);
-            accumulatedTime -= PHYSICS_STEP;
+            InitializePlayer(player, stage.startX, stage.startY);
+            accumulatedTime = 0.0f;
+        }
+        else
+        {
+            if (reversePressed)
+            {
+                ReversePlayerGravity(player);
+            }
+
+            accumulatedTime += deltaTime;
+
+            while (accumulatedTime >= PHYSICS_STEP)
+            {
+                UpdatePlayer(player, moveDirection, PHYSICS_STEP, stage);
+                accumulatedTime -= PHYSICS_STEP;
+
+                // ミスをすぐ検出できるよう、物理更新のたびに調べます。
+                if (IsPlayerDead(player, stage))
+                {
+                    InitializePlayer(player, stage.startX, stage.startY);
+                    accumulatedTime = 0.0f;
+                    break;
+                }
+            }
         }
 
         // 4. 現在の状態を描画します。
@@ -83,12 +103,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         DrawPlayer(player);
 
         DrawString(24, 24,
-            "Step 5 - Left/Right: Move / Space: Reverse / Esc: Exit",
+            "Step 6 - Left/Right: Move / Space: Reverse / R: Retry / Esc: Exit",
             textColor);
 
         DrawString(24, 44,
             player.gravityDirection == 1 ? "Gravity: DOWN" : "Gravity: UP",
             textColor);
+
+        DrawString(620, 44, "Red zones: spikes", textColor);
 
         ScreenFlip();
         WaitTimer(1);

@@ -93,6 +93,32 @@ void UpdatePlayer(Player& player, int moveDirection, float deltaTime,
     }
 }
 
+bool IsPlayerDead(const Player& player, const Stage& stage)
+{
+    // プレイヤー全体が画面の外へ出たらミスにします。
+    if (player.x + PLAYER_SIZE <= 0.0f || player.x >= WINDOW_W ||
+        player.y + PLAYER_SIZE <= 0.0f || player.y >= WINDOW_H)
+    {
+        return true;
+    }
+
+    for (int i = 0; i < stage.spikeCount; ++i)
+    {
+        const Rect& spike = stage.spikes[i].bounds;
+
+        // 端が接触した場合もミスにします。
+        if (player.x <= spike.x + spike.width &&
+            player.x + PLAYER_SIZE >= spike.x &&
+            player.y <= spike.y + spike.height &&
+            player.y + PLAYER_SIZE >= spike.y)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void DrawPlayer(const Player& player)
 {
     const int drawX = static_cast<int>(player.x);

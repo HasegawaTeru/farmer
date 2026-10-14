@@ -3,32 +3,73 @@
 
 void InitializeStage(Stage& stage)
 {
-    // 今回は衝突確認用のステージです。完成版の3面は後で作ります。
+    // 衝突・ミス確認用のステージです。床には落下用の穴があります。
     stage = {
         {
             {   0,  64, 1280,  32 }, // 天井
-            {   0, 656, 1280,  64 }, // 床
+            {   0, 656, 1040,  64 }, // 床の左側
+            {1160, 656,  120,  64 }, // 床の右側。1040～1160 が穴
             {   0,  96,   32, 560 }, // 左の壁
             {1248,  96,   32, 560 }, // 右の壁
             { 360, 480,  240,  24 }, // 足場
             { 880, 496,   32, 160 }  // 床から伸びる壁
         },
-        6,            // 実際に使う地形の数
-        420.0f, 300.0f // 開始位置
+        7,
+        420.0f, 300.0f,
+        {
+            { {640, 632, 120, 24}, -1 }, // 床のトゲ
+            { {760,  96, 120, 24},  1 }  // 天井のトゲ
+        },
+        2
     };
 }
 
 void DrawStage(const Stage& stage)
 {
     const unsigned int color = GetColor(100, 115, 140);
+
     for (int i = 0; i < stage.solidCount; ++i)
     {
         const Rect& solid = stage.solids[i];
         const int x = static_cast<int>(solid.x);
         const int y = static_cast<int>(solid.y);
+
         DrawBox(x, y,
             x + static_cast<int>(solid.width) - 1,
             y + static_cast<int>(solid.height) - 1,
             color, TRUE);
+    }
+
+    const unsigned int dangerColor = GetColor(100, 30, 40);
+    const unsigned int spikeColor = GetColor(245, 70, 80);
+
+    for (int i = 0; i < stage.spikeCount; ++i)
+    {
+        const Spike& spike = stage.spikes[i];
+        const int x = static_cast<int>(spike.bounds.x);
+        const int y = static_cast<int>(spike.bounds.y);
+        const int width = static_cast<int>(spike.bounds.width);
+        const int height = static_cast<int>(spike.bounds.height);
+
+        // 背景も塗り、矩形全体に当たり判定があることを示します。
+        DrawBox(x, y, x + width - 1, y + height - 1, dangerColor, TRUE);
+
+        int toothCount = width / 24;
+        if (toothCount < 1)
+        {
+            toothCount = 1;
+        }
+
+        const int baseY = (spike.direction == -1) ? y + height - 1 : y;
+        const int tipY = (spike.direction == -1) ? y : y + height - 1;
+
+        for (int tooth = 0; tooth < toothCount; ++tooth)
+        {
+            const int left = x + tooth * width / toothCount;
+            const int right = x + (tooth + 1) * width / toothCount - 1;
+
+            DrawTriangle(left, baseY, right, baseY,
+                (left + right) / 2, tipY, spikeColor, TRUE);
+        }
     }
 }

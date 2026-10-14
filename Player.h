@@ -15,4 +15,5 @@ void InitializePlayer(Player& player, float startX, float startY);
 void ReversePlayerGravity(Player& player);
 void UpdatePlayer(Player& player, int moveDirection, float deltaTime,
     const Stage& stage);
+bool IsPlayerDead(const Player& player, const Stage& stage);
 void DrawPlayer(const Player& player);
