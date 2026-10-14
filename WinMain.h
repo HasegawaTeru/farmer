@@ -5,6 +5,7 @@
 // “¯‚É1‚Â‚Ìó‘Ô‚¾‚¯‚ğ‚¿‚Ü‚·B
 enum class GameState
 {
+    Title,
     Playing,
     StageClear,
     AllClear

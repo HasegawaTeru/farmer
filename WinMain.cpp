@@ -2,6 +2,7 @@
 #include "GameConfig.h"
 #include "Player.h"
 #include "Scene_Game.h"
+#include "Scene_Title.h"
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
@@ -19,7 +20,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     SetDrawScreen(DX_SCREEN_BACK);
 
     int stageIndex = 0; // 内部の番号は 0、1、2 です。
-    GameState gameState = GameState::Playing;
+    GameState gameState = GameState::Title;
 
     Stage stage{};
     InitializeStage(stage, stageIndex);
@@ -76,30 +77,39 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         previousEnterDown = enterDown;
 
         // 3. クリア後は物理更新を止め、Enter を待ちます。
-        if (gameState != GameState::Playing)
+                // 3. 現在の画面に応じて処理します。
+        if (gameState == GameState::Title)
         {
             accumulatedTime = 0.0f;
 
             if (enterPressed)
             {
-                if (gameState == GameState::AllClear)
-                {
-                    stageIndex = 0;
-                }
-                else
-                {
-                    ++stageIndex;
-                }
-
+                stageIndex = 0;
                 InitializeStage(stage, stageIndex);
                 InitializePlayer(player, stage.startX, stage.startY);
                 gameState = GameState::Playing;
             }
         }
-        else if (retryPressed)
+        else if (gameState == GameState::StageClear)
         {
-            InitializePlayer(player, stage.startX, stage.startY);
             accumulatedTime = 0.0f;
+
+            if (enterPressed)
+            {
+                ++stageIndex;
+                InitializeStage(stage, stageIndex);
+                InitializePlayer(player, stage.startX, stage.startY);
+                gameState = GameState::Playing;
+            }
+        }
+        else if (gameState == GameState::AllClear)
+        {
+            accumulatedTime = 0.0f;
+
+            if (enterPressed)
+            {
+                gameState = GameState::Title;
+            }
         }
         else
         {
@@ -135,34 +145,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             }
         }
 
-        // 4. 現在の状態を描画します。
+        // 4. 現在の画面を1つだけ描画します。
         ClearDrawScreen();
-        DrawStage(stage);
-        DrawPlayer(player);
 
-        DrawString(24, 24,
-            "Step 7 - Left/Right: Move / Space: Reverse / R: Retry / Esc: Exit",
-            textColor);
-
-        DrawString(24, 44,
-            player.gravityDirection == 1 ? "Gravity: DOWN" : "Gravity: UP",
-            textColor);
-
-        DrawString(620, 44, "Red zones: spikes", textColor);
-
-        DrawFormatString(1000, 44, textColor,
-            "Stage: %d / %d", stageIndex + 1, STAGE_COUNT);
-
-        if (gameState == GameState::StageClear)
+        if (gameState == GameState::Title)
         {
-            DrawString(420, 300,
-                "STAGE CLEAR! Enter: Next stage", textColor);
+            DrawTitleScreen();
+        }
+        else if (gameState == GameState::Playing)
+        {
+            DrawStage(stage);
+            DrawPlayer(player);
+
+            DrawString(24, 24,
+                "Left/Right: Move / Space: Reverse / R: Retry / Esc: Exit",
+                textColor);
+
+            DrawString(24, 44,
+                player.gravityDirection == 1 ? "Gravity: DOWN" : "Gravity: UP",
+                textColor);
+
+            DrawString(620, 44, "Red zones: spikes", textColor);
+
+            DrawFormatString(1000, 44, textColor,
+                "Stage: %d / %d", stageIndex + 1, STAGE_COUNT);
+        }
+        else if (gameState == GameState::StageClear)
+        {
+            DrawStageClearScreen(stageIndex + 1);
         }
         else if (gameState == GameState::AllClear)
         {
-            // タイトル画面を追加するまでは、最初から再開します。
-            DrawString(400, 300,
-                "ALL STAGES CLEAR! Enter: Restart", textColor);
+            DrawAllClearScreen();
         }
 
         ScreenFlip();

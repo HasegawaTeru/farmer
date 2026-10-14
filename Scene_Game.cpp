@@ -3,39 +3,54 @@
 
 void InitializeStage(Stage& stage, int stageIndex)
 {
-    // 衝突・ミス確認用のステージです。床には落下用の穴があります。
-    stage = {
-        {
-            {   0,  64, 1280,  32 }, // 天井
-            {   0, 656, 1040,  64 }, // 床の左側
-            {1160, 656,  120,  64 }, // 床の右側
-            {   0,  96,   32, 560 }, // 左の壁
-            {1248,  96,   32, 560 }, // 右の壁
-            { 360, 480,  240,  24 }, // 足場
-            { 880, 496,   32, 160 }  // 床から伸びる壁
-        },
-        7,
-        420.0f, 300.0f,
-        {
-            { {640, 632, 120, 24}, -1 },
-            { {760,  96, 120, 24},  1 }
-        },
-        2,
-        {} // 出口はステージ番号に応じて下で設定します。
-    };
+    // 前のステージの地形やトゲを残さないよう、すべて初期化します。
+    stage = {};
 
-    // 今回は切り替え確認用に、同じ地形で出口の位置を変えます。
+    // 3面に共通する外周です。
+    stage.solids[0] = { 0,  64, 1280,  32 }; // 天井
+    stage.solids[1] = { 0, 656, 1280,  64 }; // 床
+    stage.solids[2] = { 0,  96,   32, 560 }; // 左の壁
+    stage.solids[3] = { 1248,  96,   32, 560 }; // 右の壁
+    stage.solidCount = 4;
+    stage.startX = 96.0f;
+    stage.startY = 616.0f;
+
     if (stageIndex == 0)
     {
-        stage.goal = { 540, 416, 48, 64 }; // 足場の右側
+        // 1面：安全な床と天井で、初めての重力反転を練習します。
+        stage.name = "1 - Learn gravity";
+        stage.hint = "Press Space to reach the ceiling. Move right to EXIT.";
+        stage.goal = { 1168, 96, 48, 64 };
     }
     else if (stageIndex == 1)
     {
-        stage.goal = { 96, 592, 48, 64 }; // 床の左側
+        // 2面：床、天井、床の順にトゲを避けます。
+        stage.name = "2 - Choose a safe side";
+        stage.hint = "Floor spikes: use the ceiling. Ceiling spikes: use the floor.";
+
+        stage.spikes[0] = { {320, 632, 200, 24}, -1 };
+        stage.spikes[1] = { {680,  96, 200, 24},  1 };
+        stage.spikes[2] = { {960, 632, 160, 24}, -1 };
+        stage.spikeCount = 3;
+
+        stage.goal = { 1168, 96, 48, 64 };
     }
     else
     {
-        stage.goal = { 96, 96, 48, 64 }; // 天井の左側
+        // 3面：上下のトゲに触れる前に、空中で反転します。
+        stage.name = "3 - Reverse in midair";
+        stage.hint = "Rest on the middle platform. Reverse before the red floor or ceiling.";
+
+        stage.solids[4] = { 400, 432,  40, 224 }; // 下から伸びる壁
+        stage.solids[5] = { 480, 480, 200,  24 }; // 中間の安全な足場
+        stage.solids[6] = { 800,  96,  40, 192 }; // 上から伸びる壁
+        stage.solidCount = 7;
+
+        stage.spikes[0] = { {320, 632, 720, 24}, -1 };
+        stage.spikes[1] = { {160,  96, 880, 24},  1 };
+        stage.spikeCount = 2;
+
+        stage.goal = { 1168, 576, 48, 80 };
     }
 }
 
@@ -98,4 +113,42 @@ void DrawStage(const Stage& stage)
                 (left + right) / 2, tipY, spikeColor, TRUE);
         }
     }
+
+    // 床の下側にステージ名とヒントを表示します。
+    const unsigned int textColor = GetColor(240, 240, 240);
+    DrawString(48, 676, stage.name, textColor);
+    DrawString(48, 698, stage.hint, textColor);
+}
+
+void DrawStageClearScreen(int stageNumber)
+{
+    const unsigned int white = GetColor(240, 240, 240);
+    const unsigned int green = GetColor(70, 200, 120);
+
+    SetFontSize(40);
+    DrawString(420, 220, "STAGE CLEAR!", green);
+
+    SetFontSize(24);
+    DrawFormatString(452, 304, white,
+        "Stage %d / %d completed", stageNumber, STAGE_COUNT);
+    DrawString(452, 364, "Enter: Next stage", white);
+    DrawString(452, 412, "Esc: Exit", white);
+
+    SetFontSize(16);
+}
+
+void DrawAllClearScreen()
+{
+    const unsigned int white = GetColor(240, 240, 240);
+    const unsigned int green = GetColor(70, 200, 120);
+
+    SetFontSize(40);
+    DrawString(384, 220, "ALL STAGES CLEAR!", green);
+
+    SetFontSize(24);
+    DrawString(432, 320, "You mastered gravity!", white);
+    DrawString(432, 376, "Enter: Back to title", white);
+    DrawString(432, 424, "Esc: Exit", white);
+
+    SetFontSize(16);
 }

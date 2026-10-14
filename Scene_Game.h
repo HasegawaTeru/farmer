@@ -27,6 +27,8 @@ struct Stage
     Spike spikes[MAX_SPIKES];
     int spikeCount;
     Rect goal;
+    const char* name;
+    const char* hint;
 };
 
 void InitializeStage(Stage& stage, int stageIndex = 0);
