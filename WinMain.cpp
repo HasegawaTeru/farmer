@@ -27,6 +27,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     const unsigned int textColor = GetColor(240, 240, 240);
     LONGLONG previousTime = GetNowHiPerformanceCount();
     float accumulatedTime = 0.0f;
+    bool previousSpaceDown = false;
 
     while (ProcessMessage() == 0)
     {
@@ -57,6 +58,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             ++moveDirection;
         }
 
+        // 押した瞬間だけ反転します。物理更新の while の外で判定します。
+        const bool spaceDown = CheckHitKey(KEY_INPUT_SPACE) != 0;
+
+        if (spaceDown && !previousSpaceDown)
+        {
+            ReversePlayerGravity(player);
+        }
+
+        previousSpaceDown = spaceDown;
+
         // 3. 経過時間をため、物理を常に同じ時間幅で更新します。
         accumulatedTime += deltaTime;
 
@@ -70,9 +81,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         ClearDrawScreen();
         DrawStage(stage);
         DrawPlayer(player);
+
         DrawString(24, 24,
-            "Step 4 - Gravity & Collision / Left/Right: Move / Esc: Exit",
+            "Step 5 - Left/Right: Move / Space: Reverse / Esc: Exit",
             textColor);
+
+        DrawString(24, 44,
+            player.gravityDirection == 1 ? "Gravity: DOWN" : "Gravity: UP",
+            textColor);
+
         ScreenFlip();
         WaitTimer(1);
     }

@@ -8,8 +8,11 @@ struct Player
     float y;
     float velocityX;
     float velocityY;
+    int gravityDirection; // ‰ºŒü‚«‚Í 1AãŒü‚«‚Í -1
 };
 
 void InitializePlayer(Player& player, float startX, float startY);
-void UpdatePlayer(Player& player, int moveDirection, float deltaTime, const Stage& stage);
+void ReversePlayerGravity(Player& player);
+void UpdatePlayer(Player& player, int moveDirection, float deltaTime,
+    const Stage& stage);
 void DrawPlayer(const Player& player);

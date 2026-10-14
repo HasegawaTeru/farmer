@@ -8,6 +8,13 @@ void InitializePlayer(Player& player, float startX, float startY)
     player.y = startY;
     player.velocityX = 0.0f;
     player.velocityY = 0.0f;
+    player.gravityDirection = 1;
+}
+
+void ReversePlayerGravity(Player& player)
+{
+    player.gravityDirection *= -1;
+    player.velocityY = 0.0f;
 }
 
 void UpdatePlayer(Player& player, int moveDirection, float deltaTime,
@@ -45,7 +52,7 @@ void UpdatePlayer(Player& player, int moveDirection, float deltaTime,
     }
 
     // 2. 重力で縦速度を変え、速さを制限します。
-    player.velocityY += GRAVITY * deltaTime;
+    player.velocityY += GRAVITY * player.gravityDirection * deltaTime;
 
     if (player.velocityY > MAX_FALL_SPEED)
     {
@@ -90,7 +97,10 @@ void DrawPlayer(const Player& player)
 {
     const int drawX = static_cast<int>(player.x);
     const int drawY = static_cast<int>(player.y);
-    const unsigned int color = GetColor(80, 210, 255);
+
+    const unsigned int color = (player.gravityDirection == 1)
+        ? GetColor(80, 210, 255)
+        : GetColor(255, 180, 80);
 
     DrawBox(drawX, drawY,
         drawX + PLAYER_SIZE - 1, drawY + PLAYER_SIZE - 1,
