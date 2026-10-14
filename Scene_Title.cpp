@@ -29,3 +29,19 @@ void DrawTitleScreen()
     // 次の画面の文字サイズに影響を残さないように戻します。
     SetFontSize(16);
 }
+
+void DrawStageSelectScreen()
+{
+    const unsigned int white = GetColor(240, 240, 240);
+    const unsigned int cyan = GetColor(80, 210, 255);
+
+    SetFontSize(40);
+    DrawString(480, 180, "STAGE SELECT", cyan);
+
+    SetFontSize(24);
+    DrawString(440, 300, "Enter: Play Stage 1", white);
+    DrawString(440, 348, "Esc: Exit", white);
+
+    // ゲーム画面へ文字サイズの変更を持ち越さないようにします。
+    SetFontSize(16);
+}

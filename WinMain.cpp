@@ -83,6 +83,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
             if (enterPressed)
             {
+                gameState = GameState::StageSelect;
+            }
+        }
+        else if (gameState == GameState::StageSelect)
+        {
+            accumulatedTime = 0.0f;
+
+            if (enterPressed)
+            {
                 stageIndex = 0;
                 InitializeStage(stage, stageIndex);
                 InitializePlayer(player, stage.startX, stage.startY);
@@ -151,9 +160,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
         // 4. 現在の状態を描画します。
         ClearDrawScreen();
+
         if (gameState == GameState::Title)
         {
             DrawTitleScreen();
+        }
+        else if (gameState == GameState::StageSelect)
+        {
+            DrawStageSelectScreen();
         }
         else if (gameState == GameState::Playing)
         {
@@ -180,32 +194,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         else if (gameState == GameState::AllClear)
         {
             DrawAllClearScreen();
-        }
-
-        DrawString(24, 24,
-            "Step 8 - Left/Right: Move / Space: Reverse / R: Retry / Esc: Exit",
-            textColor);
-
-        DrawString(24, 44,
-            player.gravityDirection == 1 ? "Gravity: DOWN" : "Gravity: UP",
-            textColor);
-
-        DrawString(620, 44, "Red zones: spikes", textColor);
-
-        DrawFormatString(1000, 44, textColor,
-            "Stage: %d / %d", stageIndex + 1, STAGE_COUNT);
-
-        if (gameState == GameState::StageClear)
-        {
-            DrawString(420, 300,
-                "STAGE CLEAR! Enter: Next stage", textColor);
-        }
-        else if (gameState == GameState::AllClear)
-        {
-            // タイトル画面を追加するまでは、最初から再開します。
-            DrawString(400, 300,
-                "ALL STAGES CLEAR! Enter: Restart", textColor);
-        }
+        }   
 
         ScreenFlip();
         WaitTimer(1);
