@@ -5,8 +5,23 @@ constexpr int WINDOW_H = 720;
 constexpr int PLAYER_SIZE = 40;
 constexpr int STAGE_COUNT = 3;
 
-// 難易度は EASY・NORMAL・HARD の3種類です。
+// 難易度の数
 constexpr int DIFFICULTY_COUNT = 3;
+
+// 1つの難易度に含まれるステージ数
+constexpr int STAGES_PER_DIFFICULTY = 3;
+
+// 全ステージ数：3 × 3 = 9
+constexpr int STAGE_COUNT =
+DIFFICULTY_COUNT * STAGES_PER_DIFFICULTY;
+
+// 難易度の種類
+enum class Difficulty
+{
+    Easy,
+    Normal,
+    Hard
+};
 
 // 各難易度に3ステージずつ用意する予定です。
 constexpr int STAGES_PER_DIFFICULTY = 3;
