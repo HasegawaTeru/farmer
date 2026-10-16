@@ -20,7 +20,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     SetDrawScreen(DX_SCREEN_BACK);
 
     int stageIndex = 0; // ì‡ïîÇÃî‘çÜÇÕ 0ÅA1ÅA2 Ç≈Ç∑ÅB
-    Difficulty difficulty = Difficulty::Easy;
     GameState gameState = GameState::Title;
 
     Stage stage{};
@@ -35,8 +34,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     bool previousSpaceDown = false;
     bool previousRetryDown = false;
     bool previousEnterDown = false;
-    bool previousLeftDown = false;
-    bool previousRightDown = false;
 
     while (ProcessMessage() == 0)
     {
@@ -58,14 +55,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         }
 
         int moveDirection = 0;
-        const bool leftDown = CheckHitKey(KEY_INPUT_LEFT) != 0;
-        const bool rightDown = CheckHitKey(KEY_INPUT_RIGHT) != 0;
-
-        const bool leftPressed = leftDown && !previousLeftDown;
-        const bool rightPressed = rightDown && !previousRightDown;
-
-        previousLeftDown = leftDown;
-        previousRightDown = rightDown;
         if (CheckHitKey(KEY_INPUT_LEFT) != 0)
         {
             --moveDirection;
@@ -100,14 +89,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         else if (gameState == GameState::StageSelect)
         {
             accumulatedTime = 0.0f;
-
-            const int change =
-                static_cast<int>(rightPressed) - static_cast<int>(leftPressed);
-
-            difficulty = static_cast<Difficulty>(
-                (static_cast<int>(difficulty) + change + DIFFICULTY_COUNT)
-                % DIFFICULTY_COUNT
-                );
 
             if (enterPressed)
             {
