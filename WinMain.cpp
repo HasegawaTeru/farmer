@@ -21,6 +21,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
     int stageIndex = 0; // 内部の番号は 0、1、2 です。
     int difficultyIndex = 0; // 0:EASY、1:NORMAL、2:HARD
+    int selectedStageIndex = 0; // 0:1面、1:2面、2:3面
     GameState gameState = GameState::Title;
 
     Stage stage{};
@@ -37,6 +38,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     bool previousEnterDown = false;
     bool previousUpDown = false;
     bool previousDownDown = false;
+    bool previousLeftDown = false;
+    bool previousRightDown = false;
 
     while (ProcessMessage() == 0)
     {
@@ -57,12 +60,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             break;
         }
 
+        const bool leftDown = CheckHitKey(KEY_INPUT_LEFT) != 0;
+        const bool rightDown = CheckHitKey(KEY_INPUT_RIGHT) != 0;
+
         int moveDirection = 0;
-        if (CheckHitKey(KEY_INPUT_LEFT) != 0)
+
+        if (leftDown)
         {
             --moveDirection;
         }
-        if (CheckHitKey(KEY_INPUT_RIGHT) != 0)
+        if (rightDown)
         {
             ++moveDirection;
         }
@@ -78,6 +85,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         const bool enterPressed = enterDown && !previousEnterDown;
         const bool upPressed = upDown && !previousUpDown;
         const bool downPressed = downDown && !previousDownDown;
+        const bool leftPressed = leftDown && !previousLeftDown;
+        const bool rightPressed = rightDown && !previousRightDown;
 
         previousSpaceDown = spaceDown;
         previousRetryDown = retryDown;
@@ -85,6 +94,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         previousUpDown = upDown;
         previousDownDown = downDown;
         previousEnterDown = enterDown;
+        previousLeftDown = leftDown;
+        previousRightDown = rightDown;
 
         // 3. クリア後は物理更新を止め、Enter を待ちます。
         if (gameState == GameState::Title)
@@ -109,6 +120,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 difficultyIndex < DIFFICULTY_COUNT - 1)
             {
                 ++difficultyIndex;
+            }
+
+            if (leftPressed && !rightPressed && selectedStageIndex > 0)
+            {
+                --selectedStageIndex;
+            }
+
+            if (rightPressed && !leftPressed &&
+                selectedStageIndex < STAGES_PER_DIFFICULTY - 1)
+            {
+                ++selectedStageIndex;
             }
 
             if (enterPressed)
