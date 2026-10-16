@@ -20,6 +20,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     SetDrawScreen(DX_SCREEN_BACK);
 
     int stageIndex = 0; // 内部の番号は 0、1、2 です。
+    int difficultyIndex = 0; // 0:EASY、1:NORMAL、2:HARD
     GameState gameState = GameState::Title;
 
     Stage stage{};
@@ -34,6 +35,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     bool previousSpaceDown = false;
     bool previousRetryDown = false;
     bool previousEnterDown = false;
+    bool previousUpDown = false;
+    bool previousDownDown = false;
 
     while (ProcessMessage() == 0)
     {
@@ -67,13 +70,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         const bool spaceDown = CheckHitKey(KEY_INPUT_SPACE) != 0;
         const bool retryDown = CheckHitKey(KEY_INPUT_R) != 0;
         const bool enterDown = CheckHitKey(KEY_INPUT_RETURN) != 0;
+        const bool upDown = CheckHitKey(KEY_INPUT_UP) != 0;
+        const bool downDown = CheckHitKey(KEY_INPUT_DOWN) != 0;
 
         const bool reversePressed = spaceDown && !previousSpaceDown;
         const bool retryPressed = retryDown && !previousRetryDown;
         const bool enterPressed = enterDown && !previousEnterDown;
+        const bool upPressed = upDown && !previousUpDown;
+        const bool downPressed = downDown && !previousDownDown;
 
         previousSpaceDown = spaceDown;
         previousRetryDown = retryDown;
+        previousEnterDown = enterDown;
+        previousUpDown = upDown;
+        previousDownDown = downDown;
         previousEnterDown = enterDown;
 
         // 3. クリア後は物理更新を止め、Enter を待ちます。
@@ -89,6 +99,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         else if (gameState == GameState::StageSelect)
         {
             accumulatedTime = 0.0f;
+
+            if (upPressed && !downPressed && difficultyIndex > 0)
+            {
+                --difficultyIndex;
+            }
+
+            if (downPressed && !upPressed &&
+                difficultyIndex < DIFFICULTY_COUNT - 1)
+            {
+                ++difficultyIndex;
+            }
 
             if (enterPressed)
             {
@@ -167,7 +188,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         }
         else if (gameState == GameState::StageSelect)
         {
-            DrawStageSelectScreen();
+            DrawStageSelectScreen(difficultyIndex);
         }
         else if (gameState == GameState::Playing)
         {
@@ -194,7 +215,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         else if (gameState == GameState::AllClear)
         {
             DrawAllClearScreen();
-        }   
+        }
 
         ScreenFlip();
         WaitTimer(1);

@@ -30,18 +30,37 @@ void DrawTitleScreen()
     SetFontSize(16);
 }
 
-void DrawStageSelectScreen()
+void DrawStageSelectScreen(int difficultyIndex)
 {
     const unsigned int white = GetColor(240, 240, 240);
     const unsigned int cyan = GetColor(80, 210, 255);
 
+    const char* difficultyNames[DIFFICULTY_COUNT] = {
+        "EASY", "NORMAL", "HARD"
+    };
+
     SetFontSize(40);
     DrawString(480, 180, "STAGE SELECT", cyan);
-
     SetFontSize(24);
-    DrawString(440, 300, "Enter: Play Stage 1", white);
-    DrawString(440, 348, "Esc: Exit", white);
 
-    // ゲーム画面へ文字サイズの変更を持ち越さないようにします。
+    for (int i = 0; i < DIFFICULTY_COUNT; ++i)
+    {
+        const int y = 280 + i * 56;
+        const bool selected = i == difficultyIndex;
+
+        if (selected)
+        {
+            DrawBox(420, y - 6, 860, y + 34,
+                GetColor(40, 60, 80), TRUE);
+        }
+
+        DrawString(440, y, selected ? ">" : " ", cyan);
+        DrawString(480, y, difficultyNames[i],
+            selected ? cyan : white);
+    }
+
     SetFontSize(16);
+    DrawString(440, 480, "Up/Down: Select difficulty", white);
+    DrawString(440, 516, "Enter: Start", white);
+    DrawString(440, 548, "Esc: Exit", white);
 }

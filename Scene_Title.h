@@ -1,4 +1,4 @@
 #pragma once
 
 void DrawTitleScreen();
-void DrawStageSelectScreen();
+void DrawStageSelectScreen(int difficultyIndex);
