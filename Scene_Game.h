@@ -31,7 +31,7 @@ struct Stage
     const char* hint;
 };
 
-void InitializeStage(Stage& stage, int stageIndex = 0);
+void InitializeStage(Stage& stage, int difficultyIndex, int stageIndex);
 void DrawStage(const Stage& stage);
 void DrawStageClearScreen(int stageNumber);
 void DrawAllClearScreen();

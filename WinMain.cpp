@@ -25,7 +25,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     GameState gameState = GameState::Title;
 
     Stage stage{};
-    InitializeStage(stage, stageIndex);
+    InitializeStage(stage, difficultyIndex, stageIndex);
 
     Player player{};
     InitializePlayer(player, stage.startX, stage.startY);
@@ -135,7 +135,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             if (enterPressed)
             {
                 stageIndex = selectedStageIndex;
-                InitializeStage(stage, stageIndex);
+                InitializeStage(stage, difficultyIndex, stageIndex);
                 InitializePlayer(player, stage.startX, stage.startY);
                 gameState = GameState::Playing;
             }
@@ -147,7 +147,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             if (enterPressed)
             {
                 ++stageIndex;
-                InitializeStage(stage, stageIndex);
+                InitializeStage(stage, difficultyIndex, stageIndex);
                 InitializePlayer(player, stage.startX, stage.startY);
                 gameState = GameState::Playing;
             }

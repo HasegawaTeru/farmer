@@ -1,7 +1,7 @@
 #include "Scene_Game.h"
 #include "DxLib.h"
 
-void InitializeStage(Stage& stage, int stageIndex)
+static void InitializeEasyStage(Stage& stage, int stageIndex)
 {
     // 前のステージの地形やトゲを残さないよう、すべて初期化します。
     stage = {};
@@ -51,6 +51,29 @@ void InitializeStage(Stage& stage, int stageIndex)
         stage.spikeCount = 2;
 
         stage.goal = { 1168, 576, 48, 80 };
+    }
+}
+
+void InitializeStage(Stage& stage, int difficultyIndex, int stageIndex)
+{
+    switch (difficultyIndex)
+    {
+    case 1:
+        // NORMAL専用の地形は、次の段階以降で追加します。
+        InitializeEasyStage(stage, stageIndex);
+        stage.name = "NORMAL - Temporary layout";
+        break;
+
+    case 2:
+        // HARD専用の地形は、次の段階以降で追加します。
+        InitializeEasyStage(stage, stageIndex);
+        stage.name = "HARD - Temporary layout";
+        break;
+
+    default:
+        // 0はEASYです。
+        InitializeEasyStage(stage, stageIndex);
+        break;
     }
 }
 

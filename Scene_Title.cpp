@@ -24,8 +24,7 @@ void DrawTitleScreen()
     DrawString(416, 404, "Space        : Reverse gravity", white);
     DrawString(416, 440, "R            : Retry stage", white);
     DrawString(416, 476, "Esc          : Exit", white);
-    DrawString(416, 536,
-        "3 stages / No jump / Unlimited reversals", orange);
+    DrawString(416, 536, "3 stages / No jump / Unlimited reversals", orange);
 
     // 次の画面の文字サイズに影響を残さないように戻します。
     SetFontSize(16);
@@ -35,9 +34,7 @@ void DrawStageSelectScreen(int difficultyIndex, int selectedStageIndex)
 {
     const unsigned int white = GetColor(240, 240, 240);
     const unsigned int cyan = GetColor(80, 210, 255);
-    const char* difficultyNames[DIFFICULTY_COUNT] = {
-        "EASY", "NORMAL", "HARD"
-    };
+    const char* difficultyNames[DIFFICULTY_COUNT] = { "EASY", "NORMAL", "HARD" };
 
     SetFontSize(40);
     DrawString(80, 104, "STAGE SELECT", cyan);
@@ -50,8 +47,7 @@ void DrawStageSelectScreen(int difficultyIndex, int selectedStageIndex)
 
         if (selected)
         {
-            DrawBox(80, y - 6, 400, y + 34,
-                GetColor(40, 60, 80), TRUE);
+            DrawBox(80, y - 6, 400, y + 34, GetColor(40, 60, 80), TRUE);
         }
 
         DrawString(100, y, selected ? ">" : " ", cyan);
@@ -63,7 +59,7 @@ void DrawStageSelectScreen(int difficultyIndex, int selectedStageIndex)
 
     // プレイ中のデータとは別に、表示用のステージを用意します。
     Stage previewStage{};
-    InitializeStage(previewStage, selectedStageIndex);
+    InitializeStage(previewStage, difficultyIndex, selectedStageIndex);
     DrawStagePreview(previewStage, 560, 256, 0.5f);
 
     SetFontSize(16);
@@ -72,6 +68,5 @@ void DrawStageSelectScreen(int difficultyIndex, int selectedStageIndex)
     DrawString(80, 592, "Enter: Start", white);
     DrawString(80, 624, "Esc: Exit", white);
     DrawString(560, 632, previewStage.name, white);
-    DrawString(560, 672,
-        "Gray: Ground  Red: Spikes  Green: Exit  Cyan: Start", white);
+    DrawString(560, 672, "Gray: Ground  Red: Spikes  Green: Exit  Cyan: Start", white);
 }
