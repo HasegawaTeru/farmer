@@ -152,3 +152,54 @@ void DrawAllClearScreen()
 
     SetFontSize(16);
 }
+
+namespace
+{
+    // ステージ内の座標を、プレビュー内の座標に変換します。
+    void DrawPreviewRect(const Rect& rect, int drawX, int drawY,
+        float scale, unsigned int color)
+    {
+        const int left = drawX + static_cast<int>(rect.x * scale);
+        const int top = drawY + static_cast<int>(rect.y * scale);
+        const int right = drawX
+            + static_cast<int>((rect.x + rect.width) * scale) - 1;
+        const int bottom = drawY
+            + static_cast<int>((rect.y + rect.height) * scale) - 1;
+
+        DrawBox(left, top, right, bottom, color, TRUE);
+    }
+}
+
+void DrawStagePreview(const Stage& stage, int drawX, int drawY, float scale)
+{
+    const int width = static_cast<int>(WINDOW_W * scale);
+    const int height = static_cast<int>(WINDOW_H * scale);
+
+    DrawBox(drawX, drawY, drawX + width - 1, drawY + height - 1,
+        GetColor(18, 22, 32), TRUE);
+
+    for (int i = 0; i < stage.solidCount; ++i)
+    {
+        DrawPreviewRect(stage.solids[i], drawX, drawY, scale,
+            GetColor(100, 115, 140));
+    }
+
+    for (int i = 0; i < stage.spikeCount; ++i)
+    {
+        DrawPreviewRect(stage.spikes[i].bounds, drawX, drawY, scale,
+            GetColor(245, 70, 80));
+    }
+
+    DrawPreviewRect(stage.goal, drawX, drawY, scale,
+        GetColor(70, 200, 120));
+
+    const Rect start = {
+        stage.startX, stage.startY,
+        static_cast<float>(PLAYER_SIZE), static_cast<float>(PLAYER_SIZE)
+    };
+    DrawPreviewRect(start, drawX, drawY, scale,
+        GetColor(80, 210, 255));
+
+    DrawBox(drawX - 2, drawY - 2, drawX + width + 1, drawY + height + 1,
+        GetColor(180, 190, 210), FALSE);
+}

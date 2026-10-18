@@ -1,4 +1,5 @@
 #include "Scene_Title.h"
+#include "Scene_Game.h"
 #include "GameConfig.h"
 #include "DxLib.h"
 
@@ -34,35 +35,43 @@ void DrawStageSelectScreen(int difficultyIndex, int selectedStageIndex)
 {
     const unsigned int white = GetColor(240, 240, 240);
     const unsigned int cyan = GetColor(80, 210, 255);
-
     const char* difficultyNames[DIFFICULTY_COUNT] = {
         "EASY", "NORMAL", "HARD"
     };
 
     SetFontSize(40);
-    DrawString(480, 180, "STAGE SELECT", cyan);
-    SetFontSize(24);
+    DrawString(80, 104, "STAGE SELECT", cyan);
 
+    SetFontSize(24);
     for (int i = 0; i < DIFFICULTY_COUNT; ++i)
     {
-        const int y = 280 + i * 56;
+        const int y = 260 + i * 56;
         const bool selected = i == difficultyIndex;
 
         if (selected)
         {
-            DrawBox(420, y - 6, 860, y + 34,
+            DrawBox(80, y - 6, 400, y + 34,
                 GetColor(40, 60, 80), TRUE);
         }
 
-        DrawString(440, y, selected ? ">" : " ", cyan);
-        DrawString(480, y, difficultyNames[i],
-            selected ? cyan : white);
+        DrawString(100, y, selected ? ">" : " ", cyan);
+        DrawString(140, y, difficultyNames[i], selected ? cyan : white);
     }
 
-    DrawFormatString(440, 448, cyan, "< Stage %d >", selectedStageIndex + 1);
+    DrawFormatString(100, 448, cyan, "< Stage %d >", selectedStageIndex + 1);
+    DrawString(560, 216, "PREVIEW", cyan);
+
+    // プレイ中のデータとは別に、表示用のステージを用意します。
+    Stage previewStage{};
+    InitializeStage(previewStage, selectedStageIndex);
+    DrawStagePreview(previewStage, 560, 256, 0.5f);
 
     SetFontSize(16);
-    DrawString(440, 480, "Up/Down: Difficulty   Left/Right: Stage", white);
-    DrawString(440, 516, "Enter: Start", white);
-    DrawString(440, 548, "Esc: Exit", white);
+    DrawString(80, 528, "Up/Down: Difficulty", white);
+    DrawString(80, 560, "Left/Right: Stage", white);
+    DrawString(80, 592, "Enter: Start", white);
+    DrawString(80, 624, "Esc: Exit", white);
+    DrawString(560, 632, previewStage.name, white);
+    DrawString(560, 672,
+        "Gray: Ground  Red: Spikes  Green: Exit  Cyan: Start", white);
 }

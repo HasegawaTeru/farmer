@@ -35,3 +35,4 @@ void InitializeStage(Stage& stage, int stageIndex = 0);
 void DrawStage(const Stage& stage);
 void DrawStageClearScreen(int stageNumber);
 void DrawAllClearScreen();
+void DrawStagePreview(const Stage& stage, int drawX, int drawY, float scale);
