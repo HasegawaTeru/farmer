@@ -121,19 +121,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 ++difficultyIndex;
             }
 
+            if (leftPressed && !rightPressed && selectedStageIndex > 0)
+            {
+                --selectedStageIndex;
+            }
+
+            if (rightPressed && !leftPressed &&
+                selectedStageIndex < STAGES_PER_DIFFICULTY - 1)
+            {
+                ++selectedStageIndex;
+            }
+
             if (enterPressed)
             {
-                if (leftPressed && !rightPressed && selectedStageIndex > 0)
-                {
-                    --selectedStageIndex;
-                }
-
-                if (rightPressed && !leftPressed &&
-                    selectedStageIndex < STAGES_PER_DIFFICULTY - 1)
-                {
-                    ++selectedStageIndex;
-                }
-
                 stageIndex = selectedStageIndex;
                 InitializeStage(stage, stageIndex);
                 InitializePlayer(player, stage.startX, stage.startY);
