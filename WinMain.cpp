@@ -93,7 +93,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         previousEnterDown = enterDown;
         previousUpDown = upDown;
         previousDownDown = downDown;
-        previousEnterDown = enterDown;
         previousLeftDown = leftDown;
         previousRightDown = rightDown;
 
