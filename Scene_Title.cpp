@@ -30,7 +30,7 @@ void DrawTitleScreen()
     SetFontSize(16);
 }
 
-void DrawStageSelectScreen(int difficultyIndex)
+void DrawStageSelectScreen(int difficultyIndex, int selectedStageIndex)
 {
     const unsigned int white = GetColor(240, 240, 240);
     const unsigned int cyan = GetColor(80, 210, 255);
@@ -59,8 +59,10 @@ void DrawStageSelectScreen(int difficultyIndex)
             selected ? cyan : white);
     }
 
+    DrawFormatString(440, 448, cyan, "< Stage %d >", selectedStageIndex + 1);
+
     SetFontSize(16);
-    DrawString(440, 480, "Up/Down: Select difficulty", white);
+    DrawString(440, 480, "Up/Down: Difficulty   Left/Right: Stage", white);
     DrawString(440, 516, "Enter: Start", white);
     DrawString(440, 548, "Esc: Exit", white);
 }
