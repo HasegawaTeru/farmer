@@ -109,6 +109,56 @@ static void InitializeNormalStage(Stage& stage, int stageIndex)
     }
 }
 
+static void InitializeHardStage(Stage& stage, int stageIndex)
+{
+    if (stageIndex != 0 && stageIndex != 1)
+    {
+        // HARDの3面は、まだEASYの地形を仮に使います。
+        InitializeEasyStage(stage, stageIndex);
+        stage.name = "HARD - Temporary layout";
+        return;
+    }
+
+    stage = {};
+
+    stage.solids[0] = { 0, 64, 1280, 32 };
+    stage.solids[1] = { 0, 656, 1280, 64 };
+    stage.solids[2] = { 0, 96, 32, 560 };
+    stage.solids[3] = { 1248, 96, 32, 560 };
+    stage.solidCount = 4;
+    stage.startX = 96.0f;
+    stage.startY = 616.0f;
+
+    if (stageIndex == 0)
+    {
+        stage.name = "HARD 1 - Narrow switches";
+        stage.hint = "Four red zones. Stop in the narrow gaps before reversing.";
+
+        stage.spikes[0] = { {240, 632, 140, 24}, -1 };
+        stage.spikes[1] = { {460, 96, 140, 24}, 1 };
+        stage.spikes[2] = { {680, 632, 140, 24}, -1 };
+        stage.spikes[3] = { {900, 96, 140, 24}, 1 };
+        stage.spikeCount = 4;
+
+        stage.goal = { 1168, 576, 48, 80 };
+    }
+    else
+    {
+        stage.name = "HARD 2 - Two landing spots";
+        stage.hint = "Land on both platforms. Reverse before touching red zones.";
+
+        stage.solids[4] = { 380, 480, 120, 24 }; // 低い足場
+        stage.solids[5] = { 720, 360, 120, 24 }; // 高い足場
+        stage.solidCount = 6;
+
+        stage.spikes[0] = { {280, 632, 800, 24}, -1 };
+        stage.spikes[1] = { {200, 96, 880, 24}, 1 };
+        stage.spikeCount = 2;
+
+        stage.goal = { 1168, 576, 48, 80 };
+    }
+}
+
 void InitializeStage(Stage& stage, int difficultyIndex, int stageIndex)
 {
     switch (difficultyIndex)
@@ -118,13 +168,10 @@ void InitializeStage(Stage& stage, int difficultyIndex, int stageIndex)
         break;
 
     case 2:
-        // HARD専用の地形は、今後追加します。
-        InitializeEasyStage(stage, stageIndex);
-        stage.name = "HARD - Temporary layout";
+        InitializeHardStage(stage, stageIndex);
         break;
 
     default:
-        // 0はEASYです。
         InitializeEasyStage(stage, stageIndex);
         break;
     }
