@@ -51,18 +51,66 @@ static void InitializeEasyStage(Stage& stage, int stageIndex)
     }
 }
 
+static void InitializeNormalStage(Stage& stage, int stageIndex)
+{
+    if (stageIndex != 0 && stageIndex != 1)
+    {
+        // NORMALの3面は、まだEASYの地形を仮に使います。
+        InitializeEasyStage(stage, stageIndex);
+        stage.name = "NORMAL - Temporary layout";
+        return;
+    }
+
+    stage = {};
+
+    // NORMALの1面・2面に共通する外周と開始位置です。
+    stage.solids[0] = { 0, 64, 1280, 32 };
+    stage.solids[1] = { 0, 656, 1280, 64 };
+    stage.solids[2] = { 0, 96, 32, 560 };
+    stage.solids[3] = { 1248, 96, 32, 560 };
+    stage.solidCount = 4;
+    stage.startX = 96.0f;
+    stage.startY = 616.0f;
+
+    if (stageIndex == 0)
+    {
+        stage.name = "NORMAL 1 - Three red zones";
+        stage.hint = "Ceiling, floor, ceiling. Stop in each gap before reversing.";
+
+        stage.spikes[0] = { {320, 632, 200, 24}, -1 };
+        stage.spikes[1] = { {640, 96, 200, 24}, 1 };
+        stage.spikes[2] = { {960, 632, 160, 24}, -1 };
+        stage.spikeCount = 3;
+
+        stage.goal = { 1168, 96, 48, 64 };
+    }
+    else
+    {
+        stage.name = "NORMAL 2 - Above and below";
+        stage.hint = "Go above the first wall, below the second, then up to EXIT.";
+
+        stage.solids[4] = { 360, 400, 48, 256 }; // 床から伸びる壁
+        stage.solids[5] = { 760, 96, 48, 256 };  // 天井から伸びる壁
+        stage.solidCount = 6;
+
+        stage.spikes[0] = { {520, 96, 200, 24}, 1 };
+        stage.spikes[1] = { {960, 632, 160, 24}, -1 };
+        stage.spikeCount = 2;
+
+        stage.goal = { 1168, 96, 48, 64 };
+    }
+}
+
 void InitializeStage(Stage& stage, int difficultyIndex, int stageIndex)
 {
     switch (difficultyIndex)
     {
     case 1:
-        // NORMAL専用の地形は、次の段階以降で追加します。
-        InitializeEasyStage(stage, stageIndex);
-        stage.name = "NORMAL - Temporary layout";
+        InitializeNormalStage(stage, stageIndex);
         break;
 
     case 2:
-        // HARD専用の地形は、次の段階以降で追加します。
+        // HARD専用の地形は、今後追加します。
         InitializeEasyStage(stage, stageIndex);
         stage.name = "HARD - Temporary layout";
         break;
