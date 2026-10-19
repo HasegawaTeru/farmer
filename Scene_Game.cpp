@@ -53,17 +53,9 @@ static void InitializeEasyStage(Stage& stage, int stageIndex)
 
 static void InitializeNormalStage(Stage& stage, int stageIndex)
 {
-    if (stageIndex != 0 && stageIndex != 1)
-    {
-        // NORMALの3面は、まだEASYの地形を仮に使います。
-        InitializeEasyStage(stage, stageIndex);
-        stage.name = "NORMAL - Temporary layout";
-        return;
-    }
-
     stage = {};
 
-    // NORMALの1面・2面に共通する外周と開始位置です。
+    // NORMALの3面に共通する外周と開始位置です。
     stage.solids[0] = { 0, 64, 1280, 32 };
     stage.solids[1] = { 0, 656, 1280, 64 };
     stage.solids[2] = { 0, 96, 32, 560 };
@@ -84,13 +76,13 @@ static void InitializeNormalStage(Stage& stage, int stageIndex)
 
         stage.goal = { 1168, 96, 48, 64 };
     }
-    else
+    else if (stageIndex == 1)
     {
         stage.name = "NORMAL 2 - Above and below";
         stage.hint = "Go above the first wall, below the second, then up to EXIT.";
 
-        stage.solids[4] = { 360, 400, 48, 256 }; // 床から伸びる壁
-        stage.solids[5] = { 760, 96, 48, 256 };  // 天井から伸びる壁
+        stage.solids[4] = { 360, 400, 48, 256 };
+        stage.solids[5] = { 760, 96, 48, 256 };
         stage.solidCount = 6;
 
         stage.spikes[0] = { {520, 96, 200, 24}, 1 };
@@ -98,6 +90,22 @@ static void InitializeNormalStage(Stage& stage, int stageIndex)
         stage.spikeCount = 2;
 
         stage.goal = { 1168, 96, 48, 64 };
+    }
+    else
+    {
+        stage.name = "NORMAL 3 - Midair rest stops";
+        stage.hint = "Land on the middle platform. Rest under the hanging wall.";
+
+        stage.solids[4] = { 400, 480, 40, 176 }; // 床から伸びる壁
+        stage.solids[5] = { 460, 464, 260, 24 }; // 中央の足場
+        stage.solids[6] = { 840, 96, 80, 224 };  // 下面で休める壁
+        stage.solidCount = 7;
+
+        stage.spikes[0] = { {360, 632, 640, 24}, -1 };
+        stage.spikes[1] = { {240, 96, 760, 24}, 1 };
+        stage.spikeCount = 2;
+
+        stage.goal = { 1168, 576, 48, 80 };
     }
 }
 
