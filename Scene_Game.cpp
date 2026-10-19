@@ -251,35 +251,38 @@ void DrawStage(const Stage& stage)
     DrawString(48, 698, stage.hint, textColor);
 }
 
-void DrawStageClearScreen(int stageNumber)
+void DrawStageClearScreen(const char* difficultyName, int stageNumber)
 {
     const unsigned int white = GetColor(240, 240, 240);
     const unsigned int green = GetColor(70, 200, 120);
 
     SetFontSize(40);
-    DrawString(420, 220, "STAGE CLEAR!", green);
+    DrawString(320, 204, "STAGE CLEAR!", green);
 
     SetFontSize(24);
-    DrawFormatString(452, 304, white,
-        "Stage %d / %d completed", stageNumber, STAGE_COUNT);
-    DrawString(452, 364, "Enter: Next stage", white);
-    DrawString(452, 412, "Esc: Exit", white);
+    DrawFormatString(400, 292, white, "Difficulty: %s", difficultyName);
+    DrawFormatString(400, 336, white,
+        "Stage %d / %d completed", stageNumber, STAGES_PER_DIFFICULTY);
+    DrawString(400, 412, "Enter: Next stage", white);
+    DrawString(400, 460, "Esc: Exit", white);
 
     SetFontSize(16);
 }
 
-void DrawAllClearScreen()
+void DrawAllClearScreen(const char* difficultyName)
 {
     const unsigned int white = GetColor(240, 240, 240);
     const unsigned int green = GetColor(70, 200, 120);
 
     SetFontSize(40);
-    DrawString(384, 220, "ALL STAGES CLEAR!", green);
+    DrawString(320, 204, "FINAL STAGE CLEAR!", green);
 
     SetFontSize(24);
-    DrawString(432, 320, "You mastered gravity!", white);
-    DrawString(432, 376, "Enter: Back to title", white);
-    DrawString(432, 424, "Esc: Exit", white);
+    DrawFormatString(400, 292, white, "Difficulty: %s", difficultyName);
+    DrawFormatString(400, 336, white,
+        "Stage %d completed", STAGES_PER_DIFFICULTY);
+    DrawString(400, 412, "Enter: Back to title", white);
+    DrawString(400, 460, "Esc: Exit", white);
 
     SetFontSize(16);
 }

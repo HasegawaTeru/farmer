@@ -19,9 +19,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
     SetDrawScreen(DX_SCREEN_BACK);
 
-    int stageIndex = 0; // 内部の番号は 0、1、2 です。
-    int difficultyIndex = 0; // 0:EASY、1:NORMAL、2:HARD
-    int selectedStageIndex = 0; // 0:1面、1:2面、2:3面
+    int stageIndex = 0;
+    int difficultyIndex = 0;
+    int selectedStageIndex = 0;
+
+    const char* difficultyNames[DIFFICULTY_COUNT] = { "EASY", "NORMAL", "HARD" };
+
     GameState gameState = GameState::Title;
 
     Stage stage{};
@@ -216,6 +219,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             DrawStage(stage);
             DrawPlayer(player);
 
+            SetFontSize(16);
             DrawString(24, 24,
                 "Left/Right: Move / Space: Reverse / R: Retry / Esc: Exit",
                 textColor);
@@ -224,18 +228,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 player.gravityDirection == 1 ? "Gravity: DOWN" : "Gravity: UP",
                 textColor);
 
-            DrawString(620, 44, "Red zones: spikes", textColor);
-
-            DrawFormatString(1000, 44, textColor,
-                "Stage: %d / %d", stageIndex + 1, STAGE_COUNT);
+            DrawFormatString(300, 44, textColor,
+                "Difficulty: %s", difficultyNames[difficultyIndex]);
+            DrawFormatString(650, 44, textColor,
+                "Stage: %d / %d", stageIndex + 1, STAGES_PER_DIFFICULTY);
+            DrawString(960, 44, "Red zones: spikes", textColor);
         }
         else if (gameState == GameState::StageClear)
         {
-            DrawStageClearScreen(stageIndex + 1);
+            DrawStageClearScreen(
+                difficultyNames[difficultyIndex], stageIndex + 1);
         }
         else if (gameState == GameState::AllClear)
         {
-            DrawAllClearScreen();
+            DrawAllClearScreen(difficultyNames[difficultyIndex]);
         }
 
         ScreenFlip();

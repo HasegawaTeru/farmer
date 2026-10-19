@@ -33,6 +33,6 @@ struct Stage
 
 void InitializeStage(Stage& stage, int difficultyIndex, int stageIndex);
 void DrawStage(const Stage& stage);
-void DrawStageClearScreen(int stageNumber);
-void DrawAllClearScreen();
+void DrawStageClearScreen(const char* difficultyName, int stageNumber);
+void DrawAllClearScreen(const char* difficultyName);
 void DrawStagePreview(const Stage& stage, int drawX, int drawY, float scale);

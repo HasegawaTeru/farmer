@@ -24,7 +24,9 @@ void DrawTitleScreen()
     DrawString(416, 404, "Space        : Reverse gravity", white);
     DrawString(416, 440, "R            : Retry stage", white);
     DrawString(416, 476, "Esc          : Exit", white);
-    DrawString(416, 536, "3 stages / No jump / Unlimited reversals", orange);
+    DrawFormatString(416, 536, orange,
+        "%d stages / No jump / Unlimited reversals",
+        DIFFICULTY_COUNT * STAGES_PER_DIFFICULTY);
 
     // 次の画面の文字サイズに影響を残さないように戻します。
     SetFontSize(16);
