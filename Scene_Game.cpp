@@ -3,52 +3,49 @@
 
 static void InitializeEasyStage(Stage& stage, int stageIndex)
 {
-    // 前のステージの地形やトゲを残さないよう、すべて初期化します。
+    // 前のステージのデータを消します。
     stage = {};
 
-    // 3面に共通する外周です。
-    stage.solids[0] = { 0,  64, 1280,  32 }; // 天井
-    stage.solids[1] = { 0, 656, 1280,  64 }; // 床
-    stage.solids[2] = { 0,  96,   32, 560 }; // 左の壁
-    stage.solids[3] = { 1248,  96,   32, 560 }; // 右の壁
+    // 全面に共通する天井、床、左右の壁です。
+    stage.solids[0] = { 0, 64, 1280, 32 };
+    stage.solids[1] = { 0, 656, 1280, 64 };
+    stage.solids[2] = { 0, 96, 32, 560 };
+    stage.solids[3] = { 1248, 96, 32, 560 };
     stage.solidCount = 4;
     stage.startX = 96.0f;
     stage.startY = 616.0f;
 
     if (stageIndex == 0)
     {
-        // 1面：安全な床と天井で、初めての重力反転を練習します。
-        stage.name = "1 - Learn gravity";
-        stage.hint = "Press Space to reach the ceiling. Move right to EXIT.";
+        // EASY 1：危険のない場所で、床から天井へ移動します。
+        stage.name = "EASY 1 - First reversal";
+        stage.hint = "Press Space to reach the ceiling, then move right.";
         stage.goal = { 1168, 96, 48, 64 };
     }
     else if (stageIndex == 1)
     {
-        // 2面：床、天井、床の順にトゲを避けます。
-        stage.name = "2 - Choose a safe side";
-        stage.hint = "Floor spikes: use the ceiling. Ceiling spikes: use the floor.";
+        // EASY 2：床のトゲを天井で避け、天井のトゲを床で避けます。
+        stage.name = "EASY 2 - Floor and ceiling";
+        stage.hint = "Use the ceiling first. Switch down between the red zones.";
 
-        stage.spikes[0] = { {320, 632, 200, 24}, -1 };
-        stage.spikes[1] = { {680,  96, 200, 24},  1 };
-        stage.spikes[2] = { {960, 632, 160, 24}, -1 };
-        stage.spikeCount = 3;
+        stage.spikes[0] = { {360, 632, 200, 24}, -1 };
+        stage.spikes[1] = { {760, 96, 200, 24}, 1 };
+        stage.spikeCount = 2;
 
-        stage.goal = { 1168, 96, 48, 64 };
+        stage.goal = { 1168, 576, 48, 80 };
     }
     else
     {
-        // 3面：上下のトゲに触れる前に、空中で反転します。
-        stage.name = "3 - Reverse in midair";
-        stage.hint = "Rest on the middle platform. Reverse before the red floor or ceiling.";
+        // EASY 3：空中で下向きに反転し、高い足場へ着地します。
+        stage.name = "EASY 3 - Land from midair";
+        stage.hint = "Rise beside the block, reverse in midair, then move onto it.";
 
-        stage.solids[4] = { 400, 432,  40, 224 }; // 下から伸びる壁
-        stage.solids[5] = { 480, 480, 200,  24 }; // 中間の安全な足場
-        stage.solids[6] = { 800,  96,  40, 192 }; // 上から伸びる壁
-        stage.solidCount = 7;
+        stage.solids[4] = { 480, 400, 240, 256 };
+        stage.solidCount = 5;
 
-        stage.spikes[0] = { {320, 632, 720, 24}, -1 };
-        stage.spikes[1] = { {160,  96, 880, 24},  1 };
-        stage.spikeCount = 2;
+        // 足場の上の天井を危険にし、空中での反転を促します。
+        stage.spikes[0] = { {400, 96, 440, 24}, 1 };
+        stage.spikeCount = 1;
 
         stage.goal = { 1168, 576, 48, 80 };
     }
