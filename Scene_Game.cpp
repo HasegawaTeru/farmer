@@ -111,14 +111,6 @@ static void InitializeNormalStage(Stage& stage, int stageIndex)
 
 static void InitializeHardStage(Stage& stage, int stageIndex)
 {
-    if (stageIndex != 0 && stageIndex != 1)
-    {
-        // HARDの3面は、まだEASYの地形を仮に使います。
-        InitializeEasyStage(stage, stageIndex);
-        stage.name = "HARD - Temporary layout";
-        return;
-    }
-
     stage = {};
 
     stage.solids[0] = { 0, 64, 1280, 32 };
@@ -142,17 +134,33 @@ static void InitializeHardStage(Stage& stage, int stageIndex)
 
         stage.goal = { 1168, 576, 48, 80 };
     }
-    else
+    else if (stageIndex == 1)
     {
         stage.name = "HARD 2 - Two landing spots";
         stage.hint = "Land on both platforms. Reverse before touching red zones.";
 
-        stage.solids[4] = { 380, 480, 120, 24 }; // 低い足場
-        stage.solids[5] = { 720, 360, 120, 24 }; // 高い足場
+        stage.solids[4] = { 380, 480, 120, 24 };
+        stage.solids[5] = { 720, 360, 120, 24 };
         stage.solidCount = 6;
 
         stage.spikes[0] = { {280, 632, 800, 24}, -1 };
         stage.spikes[1] = { {200, 96, 880, 24}, 1 };
+        stage.spikeCount = 2;
+
+        stage.goal = { 1168, 576, 48, 80 };
+    }
+    else
+    {
+        stage.name = "HARD 3 - Final crossing";
+        stage.hint = "Land, rest under the hanging wall, then land again.";
+
+        stage.solids[4] = { 400, 480, 100, 24 }; // 最初の足場
+        stage.solids[5] = { 680, 96, 80, 256 };  // 下面で休める壁
+        stage.solids[6] = { 920, 440, 100, 24 }; // 最後の足場
+        stage.solidCount = 7;
+
+        stage.spikes[0] = { {300, 632, 820, 24}, -1 };
+        stage.spikes[1] = { {200, 96, 920, 24}, 1 };
         stage.spikeCount = 2;
 
         stage.goal = { 1168, 576, 48, 80 };
