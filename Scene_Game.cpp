@@ -264,7 +264,8 @@ void DrawStageClearScreen(const char* difficultyName, int stageNumber)
     DrawFormatString(400, 336, white,
         "Stage %d / %d completed", stageNumber, STAGES_PER_DIFFICULTY);
     DrawString(400, 412, "Enter: Next stage", white);
-    DrawString(400, 460, "Esc: Exit", white);
+    DrawString(400, 460, "M: Stage select", white);
+    DrawString(400, 508, "Esc: Exit", white);
 
     SetFontSize(16);
 }
@@ -282,7 +283,8 @@ void DrawAllClearScreen(const char* difficultyName)
     DrawFormatString(400, 336, white,
         "Stage %d completed", STAGES_PER_DIFFICULTY);
     DrawString(400, 412, "Enter: Back to title", white);
-    DrawString(400, 460, "Esc: Exit", white);
+    DrawString(400, 460, "M: Stage select", white);
+    DrawString(400, 508, "Esc: Exit", white);
 
     SetFontSize(16);
 }

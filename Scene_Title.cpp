@@ -11,7 +11,7 @@ void DrawTitleScreen()
 
     // 床と天井をイメージした飾りです。当たり判定はありません。
     DrawBox(160, 112, WINDOW_W - 161, 127, cyan, TRUE);
-    DrawBox(160, 608, WINDOW_W - 161, 623, orange, TRUE);
+    DrawBox(160, 608, WINDOW_W - 161, 623, orange, TRUE);   
 
     SetFontSize(48);
     DrawString(460, 184, "REVERSE GRAVITY", cyan);
@@ -23,8 +23,9 @@ void DrawTitleScreen()
     DrawString(416, 368, "Left / Right : Move", white);
     DrawString(416, 404, "Space        : Reverse gravity", white);
     DrawString(416, 440, "R            : Retry stage", white);
-    DrawString(416, 476, "Esc          : Exit", white);
-    DrawFormatString(416, 536, orange,
+    DrawString(416, 476, "M            : Stage select", white);
+    DrawString(416, 512, "Esc          : Exit", white);
+    DrawFormatString(416, 568, orange,
         "%d stages / No jump / Unlimited reversals",
         DIFFICULTY_COUNT * STAGES_PER_DIFFICULTY);
 

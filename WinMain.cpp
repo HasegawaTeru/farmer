@@ -43,6 +43,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     bool previousDownDown = false;
     bool previousLeftDown = false;
     bool previousRightDown = false;
+    bool previousMenuDown = false;
 
     while (ProcessMessage() == 0)
     {
@@ -82,6 +83,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         const bool enterDown = CheckHitKey(KEY_INPUT_RETURN) != 0;
         const bool upDown = CheckHitKey(KEY_INPUT_UP) != 0;
         const bool downDown = CheckHitKey(KEY_INPUT_DOWN) != 0;
+        const bool menuDown = CheckHitKey(KEY_INPUT_M) != 0;
 
         const bool reversePressed = spaceDown && !previousSpaceDown;
         const bool retryPressed = retryDown && !previousRetryDown;
@@ -90,6 +92,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         const bool downPressed = downDown && !previousDownDown;
         const bool leftPressed = leftDown && !previousLeftDown;
         const bool rightPressed = rightDown && !previousRightDown;
+        const bool menuPressed = menuDown && !previousMenuDown;
 
         previousSpaceDown = spaceDown;
         previousRetryDown = retryDown;
@@ -98,9 +101,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         previousDownDown = downDown;
         previousLeftDown = leftDown;
         previousRightDown = rightDown;
+        previousMenuDown = menuDown;
 
-        // 3. クリア後は物理更新を止め、Enter を待ちます。
-        if (gameState == GameState::Title)
+        // 3. 入力に応じて画面を切り替え、必要な更新を行います。
+        const bool canReturnToStageSelect =
+            gameState == GameState::Playing ||
+            gameState == GameState::StageClear ||
+            gameState == GameState::AllClear;
+
+        if (menuPressed && canReturnToStageSelect)
+        {
+            selectedStageIndex = stageIndex;
+            accumulatedTime = 0.0f;
+            gameState = GameState::StageSelect;
+        }
+        else if (gameState == GameState::Title)
         {
             accumulatedTime = 0.0f;
 
@@ -219,9 +234,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             DrawStage(stage);
             DrawPlayer(player);
 
-            SetFontSize(16);
             DrawString(24, 24,
-                "Left/Right: Move / Space: Reverse / R: Retry / Esc: Exit",
+                "Left/Right: Move / Space: Reverse / R: Retry / M: Select / Esc: Exit",
                 textColor);
 
             DrawString(24, 44,
